@@ -23,15 +23,15 @@ function draw() {
   // Display the brush layer with all the previously drawn text
   image(brushLayer, 0, 0);
 
-  // Draw the pendulum
-  p.go(); // Update and display the pendulum
-
   // Draw a circle following the mouse as a visual indicator
   if (mouseIsPressed) {
     fill(255);
     noStroke();
     ellipse(mouseX, mouseY, windowWidth / 8);
   }
+
+  // Draw the pendulum
+  p.go(); // Update and display the pendulum
 }
 
 function Pendulum(origin, r_) {
