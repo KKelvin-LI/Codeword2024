@@ -1,0 +1,144 @@
+let pendulums = []; // Array to store multiple connected pendulums
+let draggingIndex = -1; // Index to track which pendulum is being dragged
+let gravity = 0.4; // Gravitational constant
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+  
+  // Create the first pendulum (root bob)
+  let firstPendulum = new Pendulum(createVector(width / 2, 0), windowHeight / 2.2, null);
+  pendulums.push(firstPendulum); // Add first pendulum
+}
+
+function draw() {
+  background(255);
+  
+  // Update and display all connected pendulums
+  for (let i = 0; i < pendulums.length; i++) {
+    pendulums[i].go();
+  }
+}
+
+function keyPressed() {
+  if (key === 'A') {
+    // Add new pendulum, attach it to the last one in the array
+    let lastPendulum = pendulums[pendulums.length - 1]; // Get the last pendulum
+    let newPendulum = new Pendulum(lastPendulum.position, windowHeight * 0.2, lastPendulum); // Create a new pendulum
+    pendulums.push(newPendulum); // Add the new pendulum to the list
+  }
+}
+
+// Pendulum class that handles chaotic physics of each bob
+class Pendulum {
+  constructor(origin, length, previousPendulum) {
+    this.origin = origin.copy(); // Origin (start position)
+    this.position = createVector(); // Pendulum bob position
+    this.length = length; // Length of the string (distance from origin)
+    this.angle = PI / 4; // Initial angle
+    this.aVelocity = 0; // Angular velocity
+    this.aAcceleration = 0; // Angular acceleration
+    this.damping = 0.99; // Damping factor
+    this.gravity = 0.4; // Gravitational constant
+    this.ballr = windowHeight / 15; // Radius of the bob
+    this.previousPendulum = previousPendulum; // Reference to the previous pendulum
+  }
+
+  go() {
+    this.update(); // Update the physics
+    this.display(); // Display the pendulum
+  }
+
+  update() {
+    if (draggingIndex === pendulums.indexOf(this)) {
+      let diff = createVector(mouseX - this.origin.x, mouseY - this.origin.y);
+      this.angle = atan2(-diff.y, diff.x) + HALF_PI; // Set the pendulum angle based on mouse position
+      this.aVelocity = 0; // Reset velocity while dragging
+    } else if (this.previousPendulum === null) {
+      // Root pendulum (first one in the system)
+      this.aAcceleration = (-1 * this.gravity / this.length) * sin(this.angle); // Calculate angular acceleration
+      this.aVelocity += this.aAcceleration; // Update velocity
+      this.aVelocity *= this.damping; // Apply damping
+      this.angle += this.aVelocity; // Update angle
+    } else {
+      // For the next pendulums, use simplified chaotic double pendulum equations
+      let g = this.gravity;
+      let m1 = 1; // Mass of the first pendulum
+      let m2 = 1; // Mass of the second pendulum
+      let l1 = this.previousPendulum.length; // Length of the first pendulum
+      let l2 = this.length; // Length of this pendulum
+      let theta1 = this.previousPendulum.angle;
+      let theta2 = this.angle;
+      let v1 = this.previousPendulum.aVelocity;
+      let v2 = this.aVelocity;
+
+      // Formula for angular acceleration (simplified chaotic motion)
+      let num1 = -g * (2 * m1 + m2) * sin(theta1);
+      let num2 = -m2 * g * sin(theta1 - 2 * theta2);
+      let num3 = -2 * sin(theta1 - theta2) * m2 * (v2 * v2 * l2 + v1 * v1 * l1 * cos(theta1 - theta2));
+      let den = l1 * (2 * m1 + m2 - m2 * cos(2 * theta1 - 2 * theta2));
+
+      this.previousPendulum.aAcceleration = (num1 + num2 + num3) / den;
+
+      let num4 = 2 * sin(theta1 - theta2) * (v1 * v1 * l1 * (m1 + m2) + g * (m1 + m2) * cos(theta1) + v2 * v2 * l2 * m2 * cos(theta1 - theta2));
+      let den2 = l2 * (2 * m1 + m2 - m2 * cos(2 * theta1 - 2 * theta2));
+
+      this.aAcceleration = num4 / den2;
+
+      // Update velocities and angles
+      this.aVelocity += this.aAcceleration;
+      this.aVelocity *= this.damping;
+      this.angle += this.aVelocity;
+
+      this.previousPendulum.aVelocity += this.previousPendulum.aAcceleration;
+      this.previousPendulum.aVelocity *= this.previousPendulum.damping;
+      this.previousPendulum.angle += this.previousPendulum.aVelocity;
+    }
+
+    // Update the position of the pendulum bob
+    this.position.set(this.length * sin(this.angle), this.length * cos(this.angle)); // Convert polar to cartesian
+    this.position.add(this.origin); // Adjust position relative to origin
+
+    // If there's a next pendulum in the array, update its origin to be the current pendulum's bob
+    let nextIndex = pendulums.indexOf(this) + 1;
+    if (nextIndex < pendulums.length) {
+      pendulums[nextIndex].origin = this.position.copy(); // Attach next pendulum to current bob
+    }
+  }
+
+  display() {
+    // Draw the pendulum arm
+    stroke(0);
+    strokeWeight(2);
+    line(this.origin.x, this.origin.y, this.position.x, this.position.y); // Draw the string
+
+    // Draw the pendulum bob
+    fill(0);
+    ellipse(this.position.x, this.position.y, this.ballr, this.ballr); // Draw the bob
+  }
+}
+
+// Mouse interaction for dragging any pendulum
+function mousePressed() {
+  // Check if mouse is close to any pendulum's bob
+  for (let i = 0; i < pendulums.length; i++) {
+    let d = dist(mouseX, mouseY, pendulums[i].position.x, pendulums[i].position.y);
+    if (d < pendulums[i].ballr) {
+      draggingIndex = i; // Start dragging this pendulum
+      break; // Stop checking after finding the first one
+    }
+  }
+}
+
+function mouseDragged() {
+  if (draggingIndex > -1) {
+    pendulums[draggingIndex].update(); // Update the dragged pendulum
+  }
+}
+
+function mouseReleased() {
+  draggingIndex = -1; // Stop dragging
+}
+
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight);
+}
