@@ -25,12 +25,13 @@ function draw() {
 
   // Draw a circle following the mouse as a visual indicator
   if (mouseIsPressed) {
-    fill(255);
-    noStroke();
-    ellipse(mouseX, mouseY, windowWidth / 8);
+    brushLayer.push();
+    brushLayer.fill(255);
+    //fill(255);
+    brushLayer.noStroke();
+    brushLayer.ellipse(mouseX, mouseY, windowWidth / 8);
   }
-
-  // Draw the pendulum
+    // Draw the pendulum
   p.go(); // Update and display the pendulum
 }
 
@@ -100,7 +101,7 @@ function Pendulum(origin, r_) {
       brushLayer.push();
       brushLayer.translate(this.position.x, this.position.y);
       brushLayer.rotate(angleOffset - HALF_PI);
-      brushLayer.textSize(8);
+      brushLayer.textSize(width/85);
       brushLayer.fill(0);
       brushLayer.noStroke();
       brushLayer.text(textContent.charAt(textIndex % textContent.length), 0, 0);
@@ -167,3 +168,10 @@ function mouseReleased() {
     p.isSwinging = true; // Set the pendulum to swing normally
   }
 }
+
+function windowResized(){
+  resizeCanvas(windowWidth,windowHeight);
+}
+// draw word instead of letters 
+// html text direction to left to right
+// when the word finishe in currently swing, it stops generating until it hits its leftmost or right,ost that it will start another swing
