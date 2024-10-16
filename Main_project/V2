@@ -1,0 +1,232 @@
+let pendulums = [];
+let isRunning = true;
+
+//初始化一些基本参数
+const G = 1.2; // gravitational acceleration
+const M = 1.0; // mass
+const L = 1.0; // length
+const dtMax = 30.0; // ms
+const tailMax = 400; // tail length
+
+const barWidth = 0.04;
+const barLength = 0.23;
+const massRadius = 0.035;
+const tailThickness = 0.012;
+
+// 句子数组
+const sentences = [
+  "unstable media are characterized by dynamic motion and changeability",
+  "不稳定的媒介以动态和可变性为特征",
+  "#@*&#@&##@*"
+];
+
+// 字符索引和句子索引
+let charIndex = 0;
+let sentenceIndex = 0;
+
+let originX,originY,z,d;
+
+
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+
+  originX = windowWidth / 2;
+  originY = windowHeight / 2;
+  z =  Math.min(windowWidth, windowHeight); //摆臂的缩放因子
+  d = z * barLength;
+
+
+  colorMode(HSB, 360, 100, 100);
+  pendulums.push(new Pendulum());
+}
+
+function draw() {
+  clear();
+  if (isRunning) {
+    pendulums.forEach(p => {
+      p.step(30.0 / 1000.0); // Step the pendulum with a time delta (convert ms to s)
+      p.updateTrail(); // Update the trail
+    });
+  }
+  pendulums.forEach(p => {
+    p.draw2d();
+  });
+}
+
+function mousePressed() {
+  let color = [random(360), 100, 100];
+  pendulums.push(new Pendulum(null, color));
+}
+
+function keyPressed() {
+  if (key === 'a') {
+    let color = [random(360), 100, 100];
+    pendulums.push(new Pendulum(null, color));
+  } else if (key === 'c') {
+    if (pendulums.length > 0) {
+      let color = [random(360), 100, 100];
+      pendulums.push(pendulums[0].clone({tailColor: color}));
+    }
+  } else if (key === 'd') {
+    if (pendulums.length > 0) {
+      pendulums.pop();
+    }
+  } else if (key === ' ') {
+    isRunning = !isRunning;
+  }
+}
+
+function deriviative(a1, a2, p1, p2) {
+  let ml2 = 1.0 * 1.0 * 1.0;
+  let cos12 = cos(a1 - a2);
+  let sin12 = sin(a1 - a2);
+  let da1 = 6 / ml2 * (2 * p1 - 3 * cos12 * p2) / (16 - 9 * cos12 * cos12);
+  let da2 = 6 / ml2 * (8 * p2 - 3 * cos12 * p1) / (16 - 9 * cos12 * cos12);
+  let dp1 = ml2 / -2 * (+da1 * da2 * sin12 + 3 * 1.2 / 1.0 * sin(a1));
+  let dp2 = ml2 / -2 * (-da1 * da2 * sin12 + 3 * 1.2 / 1.0 * sin(a2));
+  return [da1, da2, dp1, dp2];
+}
+
+function rk4(k1a1, k1a2, k1p1, k1p2, dt) {
+  let [k1da1, k1da2, k1dp1, k1dp2] = deriviative(k1a1, k1a2, k1p1, k1p2);
+
+  let k2a1 = k1a1 + k1da1 * dt / 2;
+  let k2a2 = k1a2 + k1da2 * dt / 2;
+  let k2p1 = k1p1 + k1dp1 * dt / 2;
+  let k2p2 = k1p2 + k1dp2 * dt / 2;
+
+  let [k2da1, k2da2, k2dp1, k2dp2] = deriviative(k2a1, k2a2, k2p1, k2p2);
+
+  let k3a1 = k1a1 + k2da1 * dt / 2;
+  let k3a2 = k1a2 + k2da2 * dt / 2;
+  let k3p1 = k1p1 + k2dp1 * dt / 2;
+  let k3p2 = k1p2 + k2dp2 * dt / 2;
+
+  let [k3da1, k3da2, k3dp1, k3dp2] = deriviative(k3a1, k3a2, k3p1, k3p2);
+
+  let k4a1 = k1a1 + k3da1 * dt;
+  let k4a2 = k1a2 + k3da2 * dt;
+  let k4p1 = k1p1 + k3dp1 * dt;
+  let k4p2 = k1p2 + k3dp2 * dt;
+
+  let [k4da1, k4da2, k4dp1, k4dp2] = deriviative(k4a1, k4a2, k4p1, k4p2);
+
+  return [
+    k1a1 + (k1da1 + 2*k2da1 + 2*k3da1 + k4da1) * dt / 6,
+    k1a2 + (k1da2 + 2*k2da2 + 2*k3da2 + k4da2) * dt / 6,
+    k1p1 + (k1dp1 + 2*k2dp1 + 2*k3dp1 + k4dp1) * dt / 6,
+    k1p2 + (k1dp2 + 2*k2dp2 + 2*k3dp2 + k4dp2) * dt / 6
+  ];
+}
+
+
+
+function Pendulum(init, color) {
+  this.tailColor = color || [0, 0, 1];
+  this.massColor = [0, 0, 0]; 
+
+  this.sentence = random(sentences); // Randomly select a sentence
+  this.fontSize = random(width / 40, width / 120); // Random font size
+  this.textColor = [random(255), random(255), random(255)]; // Random color for the text
+
+  
+
+  this.history = []; // Array to store the positions of the pendulum bob over time
+
+   // Initialize the pendulum angles and momenta
+  if (init) {
+    this.a1 = init[0];
+    this.a2 = init[1];
+    this.p1 = init[2];
+    this.p2 = init[3];
+  } else {
+    this.a1 = Math.random() * Math.PI / 2 + Math.PI * 3 / 4; // Initial angle for the first pendulum in radians
+    this.a2 = Math.random() * Math.PI / 2 + Math.PI * 3 / 4; // Initial angle for the second pendulum in radians
+    this.p1 = 0.0; // Initial angular momentum for the first pendulum
+    this.p2 = 0.0; // Initial angular momentum for the second pendulum
+  }
+
+    // Define the step function to update the pendulum state
+    this.step = function(dt) {
+      // Use the Runge-Kutta method to update the pendulum angles and momenta
+      let newState = rk4(this.a1, this.a2, this.p1, this.p2, dt);
+      this.a1 = newState[0];
+      this.a2 = newState[1];
+      this.p1 = newState[2];
+      this.p2 = newState[3];
+  
+    };
+
+  this.draw2d = function() {
+    //
+    let x = Math.sin(this.a1) * d;
+    let y = -Math.cos(this.a1) * d;
+    let x2 = x + Math.sin(this.a2) * d;
+    let y2 = y - Math.cos(this.a2) * d;
+
+
+    stroke(0);
+    strokeWeight(4);
+    fill(0);
+    ellipse(width / 2,  height / 2, z * massRadius / 2, z * massRadius / 2);
+    ellipse(x + width / 2, y + height / 2, z * massRadius / 2, z * massRadius / 2);
+    ellipse(x2 + width / 2, y2 + height / 2, z * massRadius / 2, z * massRadius / 2);
+
+    stroke(0);
+    strokeWeight(z*barWidth /4);
+    line(originX, originY, x + width / 2, y + height / 2);
+
+    line(x + width / 2, y + height / 2,x2 + width / 2, y2 + height / 2);
+
+    this.displayTrail();
+  };
+
+  this.positions = function() {
+    let x1 = originX + Math.sin(this.a1) * d;
+    let y1 = originY - Math.cos(this.a1) * d;
+    let x2 = x1 + Math.sin(this.a2) * d;
+    let y2 = y1 - Math.cos(this.a2) * d;
+    return [x1, y1, x2, y2];
+  };
+
+  this.color2style = function(color) {
+    let r = Math.round(255 * color[0]);
+    let g = Math.round(255 * color[1]);
+    let b = Math.round(255 * color[2]);
+    return [r,g,b];
+  };
+
+  this.displayTrail = function() {
+    let color = this.color2style(this.tailColor);
+    
+    for (let i = 0; i < this.history.length - 1; i++) {
+      //line(this.history[i][2], this.history[i][3] , this.history[i + 1][2] , this.history[i + 1][3] );
+      // Draw the sentence along the trail
+      stroke(color[0],color[1],color[2],(1 - i / this.history.length) * 255);
+    fill(this.textColor);
+    textSize(this.fontSize);
+    textAlign(CENTER);
+    let currentChar = this.sentence.charAt(charIndex % this.sentence.length);
+    text(currentChar, this.history[i][2], this.history[i][3]);
+    charIndex++;
+    }
+  };
+
+  this.updateTrail = function() {
+    let currentPos = this.positions();
+    this.history.push(currentPos);
+    if (this.history.length > tailMax) {
+      this.history.shift();
+    }
+  };
+  
+  this.clone = function(conf) {
+  if (!conf) conf = {};
+  let cp2;
+  if (this.p2 === 0.0) cp2 = random() * 1e-12;
+  else cp2 = this.p2 * (1 - random() * 1e-10);
+  conf.init = [this.a1, this.a2, this.p1, cp2];
+  conf.tailColor = this.tailColor;
+  return new Pendulum(conf);
+  };
+  }
