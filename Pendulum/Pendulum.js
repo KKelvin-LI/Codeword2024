@@ -177,7 +177,7 @@ function Pendulum(isFirstPendulum, color) {
     let y2 = y - Math.cos(this.a2) * d;
 
     stroke(0);
-    strokeWeight(windowHeight/4 * 0.01);
+    strokeWeight(windowHeight/10 * 0.01);
     fill(this.massColor); // Now the bob color will match the text color
     ellipse(width / 2, height / 2, z * massRadius / 2, z * massRadius / 2);
     ellipse(x + width / 2, y + height / 2, z * massRadius / 2, z * massRadius / 2);
