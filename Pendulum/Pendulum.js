@@ -38,7 +38,7 @@ function setup() {
 
   // Create a separate graphics buffer for the permanent text layer
   brushLayer = createGraphics(windowWidth, windowHeight);
-  brushLayer.background(245,245,245); // Set initial background to white
+  brushLayer.background(242,242,242); // Set initial background to white
 
   originX = windowWidth / 2;
   originY = windowHeight / 2;
@@ -97,24 +97,17 @@ function keyPressed() {
 
 // Generate vibrant colors from a well-selected palette of 20 futuristic colors
 function generateFuturisticColor() {
-  let vibrantColors = [
+let vibrantColors = [
     [0, 47, 167], //Klein Blue    
-    [129, 216, 208], //Tiffany Blue   
-    [0, 254, 164],  //half blue
     [0, 187, 239],  //SKy Blue  
-    [56, 254, 0], // Vibrant green
-    [188, 247, 64], // Yello Green   
+    [56, 254, 0], // Vibrant green  
     [249, 220, 36],  //Senneier Yellow  
-    [255, 88, 2],  //Neon Orange  
-    [254, 48, 27],  //Orange red     
-    [243, 7, 2],   //RGB red
-    [255, 181, 193],  //light pink
-    [255, 96, 250],  //medium pink  
+    [255, 88, 2],  //Neon Orange      
+    [243, 7, 2],   //RGB red 
     [248, 0, 124], // Neon Pink
     [166, 20, 246],  //medium purple
-    [122, 0, 213],  //Dark purple
-     
-  ];
+    [62,125,70],
+      ];
 
   // Randomly pick one of the 20 vibrant colors
   return random(vibrantColors);
@@ -184,7 +177,7 @@ function Pendulum(isFirstPendulum, color) {
     let y2 = y - Math.cos(this.a2) * d;
 
     stroke(0);
-    strokeWeight(windowHeight * 0.01);
+    strokeWeight(windowHeight/4 * 0.01);
     fill(this.massColor); // Now the bob color will match the text color
     ellipse(width / 2, height / 2, z * massRadius / 2, z * massRadius / 2);
     ellipse(x + width / 2, y + height / 2, z * massRadius / 2, z * massRadius / 2);
