@@ -264,3 +264,7 @@ function Pendulum(isFirstPendulum, color) {
 function isChinese(char) {
   return /[\u3400-\u9FBF]/.test(char);
 }
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);  // Resize the canvas whenever the window is resized
+}
