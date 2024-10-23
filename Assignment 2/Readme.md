@@ -1,1 +1,1 @@
-Click the Pendulum file and use the index.html to run the project. The more pendulum you add, the better result it would be. You can delete it any time when you think there are too much of them.
+Click the Pendulum folder and use the index.html to run the project. The more pendulum you add, the better result it would be. You can delete it any time when you think there are too much of them. If you want to clone the files, please remember to clone the entire folder of 'Pendulum'.
