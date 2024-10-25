@@ -1,8 +1,7 @@
 let pendulums = [];
 let isRunning = true;
-let brushLayer; // Layer for permanent text drawing
-let customFont, customFont2; // Custom fonts
-
+let brushLayer; 
+let customFont, customFont2; 
 // Initialize some basic parameters
 const G = 1.2; // gravitational acceleration
 const M = 1.0; // mass
