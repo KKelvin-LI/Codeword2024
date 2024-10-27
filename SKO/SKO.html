@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <style>
+        @font-face {
+            font-family: 'Montserrat';
+            src: url(../Font/Montserrat-SemiBold.ttf) format('truetype');
+            font-weight: 400; 
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            src: url(../Font/Montserrat-Light.ttf);
+            font-weight: 300; 
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Montserrat', Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            color: black;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .rectangle {
+            height: 10.1vh;
+            width: 100vw;
+            background-color: #f2f2f2;
+            border: 0.3vh solid #161515;
+            box-shadow: inset 0vw 0vw 1vw 0vw #575454;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 6;
+        }
+
+        .rectangle1, .rectangle2, .rectangle3, .rectangle4, .rectangle5 {
+            height: 89%;
+            width: 5vw;
+            background-color: #f2f2f2;
+            border: 0.3vh solid #161515;
+            box-shadow: inset 0vw 0vw 1vw 0vw #575454;
+            position: absolute;
+            bottom: 0;
+            z-index: 7;
+            transition: all 1.5s ease; 
+        }
+
+        .rectangle1 { left: 0vw; }
+        .rectangle2 { left: 80vw; }
+        .rectangle3 { left: 85vw; }
+        .rectangle4 { left: 90vw; }
+        .rectangle5 { left: 95vw; }
+
+        h1 {
+            margin-top: 1vh;
+            margin-left: 1.4vw;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.001em;
+            font-weight: 400;
+            font-size: 14.5vh;
+            color: #161515;
+            position: relative;
+            z-index: 20; /* Ensures h1 stays on top */
+        }
+
+        h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.001em;
+            font-weight: 400;
+            font-size: 9vh;
+            letter-spacing: 0.12vw;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            margin-top: -0.7vh;
+            position: absolute;
+            transition: all 1.5s ease;
+            z-index: 8;
+        }
+
+        h2 { left: -0.8vw; }
+        h3 { left: 78.7vw; cursor: pointer; }
+        h4 { left: 82.9vw; }
+        h5 { left: 86.9vw; }
+        h6 { left: 90.3vw; }
+
+        iframe {
+            position: absolute;
+            top: 0vh;  
+            width: 100vw;
+            height: 100vh;
+            overflow-y: scroll;  
+            overflow-x: hidden;
+            border: none;
+            transition: all 1.5s ease;
+            margin: 0;
+            padding: 0;
+        }
+
+    
+        #iframeOverview { z-index: 1; left: 5vw; }
+        #iframeGlossary { z-index: 2; left: 85vw; }  
+        #iframeExperiment { z-index: 3; left: 90vw; } 
+        #iframeResearch { z-index: 4; left: 95vw; }   
+        #iframeProject { z-index: 5; left: 100vw; }    
+
+    </style>
+</head>
+
+<body> 
+    <div class="rectangle"></div>
+    <div class="rectangle1"></div>
+    <div class="rectangle2"></div>
+    <div class="rectangle3"></div>
+    <div class="rectangle4"></div>
+    <div class="rectangle5"></div>
+    <div style="text-align:left">
+        <h1>SKO FOR CREATIVE CODING STUDIO</h1>
+        <h2>Overview</h2>
+        <h3>Glossary / Techniques</h3>
+        <h4>Experiments</h4>
+        <h5>Research / Inspiration</h5>
+        <h6>Project</h6>
+    </div>
+
+  
+    <iframe id="iframeOverview" src="../Overview/Overview.html" loading="lazy"></iframe>
+    <iframe id="iframeGlossary" src="../Glossory/Glossory.html" loading="lazy"></iframe>
+    <iframe id="iframeExperiment" src="../Experiment/Exp.html" loading="lazy"></iframe>
+    <iframe id="iframeResearch" src="../Research/Research.html" loading="lazy"></iframe>
+    <iframe id="iframeProject" src="../Project/Project.html" loading="lazy"></iframe>
+
+    <script>
+
+     
+        const coupledElements = [
+            { rectangle: document.querySelector('.rectangle2'), text: document.querySelector('h3'), iframe: document.getElementById('iframeGlossary') },
+            { rectangle: document.querySelector('.rectangle3'), text: document.querySelector('h4'), iframe: document.getElementById('iframeExperiment') },
+            { rectangle: document.querySelector('.rectangle4'), text: document.querySelector('h5'), iframe: document.getElementById('iframeResearch') },
+            { rectangle: document.querySelector('.rectangle5'), text: document.querySelector('h6'), iframe: document.getElementById('iframeProject') }
+        ];
+
+        coupledElements.forEach((element, index) => {
+            element.rectangle.addEventListener('click', () => moveElements(index));
+            element.text.addEventListener('click', () => moveElements(index));
+        });
+
+       
+        const rectangle1 = document.querySelector('.rectangle1');
+        const h2 = document.querySelector('h2');
+        rectangle1.addEventListener('click', resetElements);
+        h2.addEventListener('click', resetElements);
+
+
+        function moveElements(index) {
+            coupledElements.forEach((element, i) => {
+                if (i <= index) {
+                    element.rectangle.style.left = (5 * (i + 1)) + 'vw'; 
+                    element.iframe.style.left = (5 * (i + 1) + 5) + 'vw';    
+
+                 
+                    if (i === 0) {
+                        element.text.style.left = (3.8) + 'vw'; 
+                    } else if (i === 1) {
+                        element.text.style.left = (7.8) + 'vw'; 
+                    } else if (i === 2) {
+                        element.text.style.left = (12) + 'vw'; 
+                    } else if (i === 3) {
+                        element.text.style.left = (15.2) + 'vw'; 
+                    }
+                } else {
+                    
+                    const offset = (80 + (i * 5)) + 'vw';
+                    element.rectangle.style.left = offset;
+                    element.iframe.style.left = offset;
+
+                 
+                    if (i === 0) {
+                        element.text.style.left = (78.7) + 'vw';
+                    } else if (i === 1) {
+                        element.text.style.left = (82.9) + 'vw';
+                    } else if (i === 2) {
+                        element.text.style.left = (86.9) + 'vw';
+                    } else if (i === 3) {
+                        element.text.style.left = (90.3) + 'vw';
+                    }
+                }
+            });
+        }
+
+        function resetElements() {
+            coupledElements.forEach((element, index) => {
+                const offset = (80 + (index * 5)) + 'vw';
+                element.rectangle.style.left = offset;
+                element.iframe.style.left = offset;
+
+           
+                if (index === 0) {
+                    element.text.style.left = (78.7) + 'vw';
+                } else if (index === 1) {
+                    element.text.style.left = (82.9) + 'vw';
+                } else if (index === 2) {
+                    element.text.style.left = (86.9) + 'vw';
+                } else if (index === 3) {
+                    element.text.style.left = (90.3) + 'vw';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
