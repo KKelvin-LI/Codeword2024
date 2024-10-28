@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Fonts and basic styles */
+        @font-face {
+            font-family: 'Montserrat';
+            src: url(../Font/Montserrat-SemiBold.ttf) format('truetype');
+            font-weight: 500; 
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Montserrat';
+            src: url(../Font/Montserrat-Light.ttf) format('truetype');
+            font-weight: 300; 
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'NeueBit';
+            src: url(../Font/NeueBit-Regular.ttf) format('truetype');
+            font-weight: 200; 
+            font-style: normal;
+        }
+
+        html, body {
+            font-family: 'Montserrat', Helvetica, sans-serif;
+            background-color: #f2f2f2;
+            color: black;
+            height: 100vh;
+            width: 257vw;
+            margin: 0;
+            overflow-x: scroll; 
+            overflow-y: hidden; 
+            overscroll-behavior: none;
+        }
+
+        /* Rectangle background */
+        .rectangle {
+            height: 89.9vh;
+            width: 232vw;
+            background-color: #f2f2f2;
+            border: 0.3vh solid #161515;
+            box-shadow: inset 0vw 0vw 1vw 0vw #575454;
+            position: absolute;
+            bottom: 0px;
+            left: 0%;
+            z-index: -1;
+        }
+
+        h1 {
+            margin-top: 12.6vh;
+            margin-left: 4vw;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.001em;
+            font-weight: 500;
+            line-height: 1;
+            font-size: 5.2vh;
+            color:#161515;
+        }
+
+        /* Style iframes to fit content */
+        iframe {
+            border: 0;
+            width: 34vw;
+            height: 19.1vw;
+            position: absolute;
+            box-shadow: 0.15vw 0.15vw 0.8vw 0.15vw #575454;
+            object-fit: cover; /* Ensures the content scales proportionally */
+            overflow: hidden; /* Hide any overflow */
+        }
+
+        /* Text styling */
+        h2, p {
+            font-family: 'Montserrat', sans-serif;
+            color: #161515;
+            text-align: left;
+        }
+
+        h2 {
+            font-weight: 500;
+            font-size: 2.1vh;
+            line-height: 1.4;
+            margin: -0.5vh 0 0 0;
+        }
+
+        p {
+            font-weight: 300;
+            font-size: 1.7vh;
+            line-height: 1.1;
+            margin: 0 0 1vh 0;
+        }
+
+        /* Position iframes and descriptions */
+        .iframe1 { top: 20vh; left: 4vw; }
+        .iframe2 { top: 48vh; left: 42vw; }
+        .iframe3 { top: 20vh; left: 80vw; }
+        .iframe4 { top: 48vh; left: 118vw; }
+        .iframe5 { top: 20vh; left: 156vw; }
+        .iframe6 { top: 48vh; left: 194vw; }
+
+        .desc1, .desc2, .desc3, .desc4, .desc5, .desc6 {
+            position: absolute;
+            width: 34vw;
+        }
+        .desc1 { top: calc(20vh + 40.5vh); left: 4vw; }
+        .desc2 { top: calc(48vh + 40.5vh); left: 42vw; }
+        .desc3 { top: calc(20vh + 40.5vh); left: 80vw; }
+        .desc4 { top: calc(48vh + 40.5vh); left: 118vw; }
+        .desc5 { top: calc(20vh + 40.5vh); left: 156vw; }
+        .desc6 { top: calc(48vh + 40.5vh); left: 194vw; }
+
+        /* Scroll progress bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background-color: red;
+            width: 0%;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* Scroll percentage indicator */
+        .scroll-number {
+            position: fixed;
+            top: 42.5%;
+            left: 38.1%;
+            transform: translate(-50%, -50%) scaleY(2);
+            font-size: 42.5vw;
+            font-family: "Neuebit";
+            font-weight: 200;
+            color: transparent; 
+            -webkit-text-stroke: 1vh #FF0000; 
+            text-align: center;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="rectangle"></div>
+    <div style="text-align:left">
+        <h1>Coding Trials</h1>
+    </div>
+
+    <div class="scroll-progress" id="progressBar"></div>
+    <div class="scroll-number" id="scrollNumber">0%</div>
+
+    <!-- Embed content in responsive iframes -->
+    <iframe class="iframe1" scrolling="no" src="./Sound_Design/index.html"></iframe>
+    <iframe class="iframe2" scrolling="no" src="./Random_Letter/index.html"></iframe>
+    <iframe class="iframe3" scrolling="no" src="./Portrait/index.html"></iframe>
+    <iframe class="iframe4" scrolling="no" src="./Clickables/index.html"></iframe>
+    <iframe class="iframe5" scrolling="no" src="./Text_To_Point/index.html"></iframe>
+    <iframe class="iframe6" scrolling="no" src="./Multiple_Layer/index.html"></iframe>
+
+    <!-- Descriptions for each iframe -->
+    <div class="desc1"><h2>Sound</h2><p>This set of code explores sound...</p></div>
+    <div class="desc2"><h2>Random Letters</h2><p>This is an exploration of random function...</p></div>
+    <div class="desc3"><h2>Portrait</h2><p>I used this to practice the use of shapes in p5...</p></div>
+    <div class="desc4"><h2>The Clickables</h2><p>This experiment focuses on playing with buttons...</p></div>
+    <div class="desc5"><h2>Text To Point</h2><p>This is a demonstration of text to point function...</p></div>
+    <div class="desc6"><h2>Scratch Art</h2><p>I played around with layers in this trial...</p></div>
+
+    <!-- Scroll progress bar script -->
+    <script>
+        let scrollTimeout; 
+
+        function updateProgressBar() {
+            const scrollLeft = document.documentElement.scrollLeft; 
+            const totalWidth = document.documentElement.scrollWidth - document.documentElement.clientWidth; 
+            let scrollPercent = Math.round((scrollLeft / totalWidth) * 100); 
+        
+            scrollPercent = Math.max(0, Math.min(100, scrollPercent));
+
+            document.getElementById('progressBar').style.width = scrollPercent + '%';
+            document.getElementById('scrollNumber').innerText = scrollPercent + '%';
+
+            document.getElementById('progressBar').style.opacity = 1;
+            document.getElementById('scrollNumber').style.opacity = 1;
+
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                document.getElementById('progressBar').style.opacity = 0;
+                document.getElementById('scrollNumber').style.opacity = 0;
+            }, 1000);
+        }
+
+        window.onscroll = function() {
+            updateProgressBar();
+        };
+
+        updateProgressBar();
+    </script>
+
+</body>
+</html>
