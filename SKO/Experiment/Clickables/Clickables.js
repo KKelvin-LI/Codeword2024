@@ -3,9 +3,10 @@ let buttons = [];
 var myRadio;
 
 function preload() {
-  pic_1 = loadImage("data/image_1.jpeg"); 
-  pic_2 = loadImage("data/image_2.jpeg"); 
-  pic_3 = loadImage("data/image_3.jpeg"); 
+  // Adjust the path based on where your `data` folder is located
+  pic_1 = loadImage("./data/image_1.jpeg"); 
+  pic_2 = loadImage("./data/image_2.jpeg"); 
+  pic_3 = loadImage("./data/image_3.jpeg"); 
 }
 
 function setup() {
@@ -24,7 +25,10 @@ function setup() {
 
   // Create radio buttons to choose which image to display
   myRadio = createRadio();
-  myRadio.style('font-size', `${width * 0.015}px`); // Set the font size of the radio buttons to be proportional
+  myRadio.style('font-size', `${width * 0.02}px`); // Set font size for visibility
+  myRadio.style('color', 'black'); // Set text color to black
+  myRadio.style('width', `${width * 0.15}px`); // Set proportional width
+  myRadio.style('height', `${height * 0.05}px`); // Set proportional height
 
   // Add options to select images
   myRadio.option('pic_1', 'Image 1');
@@ -34,9 +38,8 @@ function setup() {
   // Set a default selected option
   myRadio.selected('pic_1');
 
-  // Place the radio buttons at the middle of the canvas
-  myRadio.position(width * 0.5 - width * 0.075, height * 0.5 - height * 0.025);
-  myRadio.size(width * 0.15, height * 0.05); // Size proportional to the canvas
+  // Place the radio buttons near the top of the canvas for better visibility
+  myRadio.position(width * 0.5 - width * 0.075, height * 0.1);
 }
 
 function draw() {
@@ -78,14 +81,16 @@ function removeButton(button) {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  
+
   // Reposition and resize elements on window resize
   for (let btn of buttons) {
     btn.position(random(width * 0.05, width * 0.95), random(height * 0.05, height * 0.95));
     btn.style('font-size', `${width * 0.008}px`); // Adjust font size on resize
     btn.style('padding', `${height * 0.005}px ${width * 0.01}px`); // Adjust padding on resize
   }
-  
-  myRadio.size(width * 0.15, height * 0.05); // Resize the radio button container
-  myRadio.position(width * 0.5 - width * 0.075, height * 0.5 - height * 0.025); // Center on resize
+
+  // Update the radio button's position and styling on resize
+  myRadio.style('width', `${width * 0.15}px`); // Update width
+  myRadio.style('height', `${height * 0.05}px`); // Update height
+  myRadio.position(width * 0.5 - width * 0.075, height * 0.1); // Center on resize
 }
